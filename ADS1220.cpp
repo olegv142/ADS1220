@@ -14,22 +14,22 @@ bool ADS1220::reset()
 	wr_cmd(ads_reset);
 	delay(1);
 	// Verify that all registers have default values
-	bool ok = true;
+	bool all_defaults = true;
 	for (int i = 0; i < 4; ++i) {
 		m_reg[i] = rd_reg(i);
 		if (m_reg[i] != 0)
-			ok = false;
+			all_defaults = false;
 	}
-	return ok;
+	return all_defaults;
 }
 
 bool ADS1220::probe()
 {
 	uint8_t const reg0 = m_reg[0] ^ 1; // Invert PGA bypass bit
 	wr_reg(0, reg0);
-	bool ok = (reg0 == rd_reg(0));
+	bool updated = (reg0 == rd_reg(0));
 	wr_reg(0, m_reg[0]);
-	return ok && (m_reg[0] == rd_reg(0));
+	return updated && (m_reg[0] == rd_reg(0));
 }
 
 void ADS1220::wr_cmd(uint8_t cmd)
